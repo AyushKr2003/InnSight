@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:inn_sight/views/home/home_page_ui.dart';
 import 'package:inn_sight/views/map/map_page.dart';
 import 'package:inn_sight/views/profile/profile_page.dart';
-import 'package:inn_sight/views/property/booking_history_page.dart';
+import 'package:inn_sight/views/booking/booking_history_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,8 +17,6 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = [
     const HomePageUI(),
     const MapPage(),
-    // Center(child: Text('Bookings Page')), // Placeholder
-    // Center(child: Text('Profile Page')), // Placeholder
     const BookingHistoryPage(),
     const ProfilePage(),
   ];

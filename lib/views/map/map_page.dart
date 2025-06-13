@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:inn_sight/Api_key.dart';
-import 'package:location/location.dart';
+// import 'package:location/location.dart'; // Removed
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -15,8 +15,8 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-  Location _locationController = new Location();
-  LatLng? _currentPos = null;
+  // Location _locationController = new Location(); // Removed
+  // LatLng? _currentPos = null; // Removed
 
   final Completer<GoogleMapController> _mcontroller =
       Completer<GoogleMapController>();
@@ -29,56 +29,56 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
-    getLocation().then(
-      (_) => {
-        getPolyLinePoints().then((coordinates) => {print(coordinates)}),
-      },
+    // getLocation().then( // Modified
+    //   (_) => {
+    getPolyLinePoints().then(
+      (coordinates) => {print(coordinates), generatePolylines(coordinates)},
     );
+    //   },
+    // );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body:
-          _currentPos == null
-              ? Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(width: 10),
-                    Text("Getting Location..."),
-                  ],
-                ),
-              )
-              : GoogleMap(
-                onMapCreated: (GoogleMapController controller) {
-                  _mcontroller.complete(controller);
-                },
-                initialCameraPosition: CameraPosition(
-                  target: _pGeoLocation,
-                  zoom: 13,
-                ),
-                markers: {
-                  Marker(
-                    markerId: MarkerId("_currentLocation"),
-                    icon: BitmapDescriptor.defaultMarker,
-                    position: _currentPos!,
-                  ),
-                  Marker(
-                    markerId: MarkerId("_sourceLocation"),
-                    icon: BitmapDescriptor.defaultMarker,
-                    position: _pGeoLocation,
-                  ),
-                  Marker(
-                    markerId: MarkerId("_destinationLocation"),
-                    icon: BitmapDescriptor.defaultMarker,
-                    position: _markerGeoLocation,
-                  ),
-                },
-                polylines: Set<Polyline>.of(_polylines.values),
-              ),
+      // _currentPos == null // Removed
+      //     ? Center(
+      //       child: Column(
+      //         crossAxisAlignment: CrossAxisAlignment.center,
+      //         mainAxisAlignment: MainAxisAlignment.center,
+      //         children: [
+      //           CircularProgressIndicator(),
+      //           SizedBox(width: 10),
+      //           Text("Getting Location..."),
+      //         ],
+      //       ),
+      //     )
+      //     : // Removed
+      GoogleMap(
+        onMapCreated: (GoogleMapController controller) {
+          _mcontroller.complete(controller);
+        },
+        initialCameraPosition: CameraPosition(target: _pGeoLocation, zoom: 13),
+        markers: {
+          // Marker( // Removed
+          //   markerId: MarkerId("_currentLocation"), // Removed
+          //   icon: BitmapDescriptor.defaultMarker, // Removed
+          //   position: _currentPos!, // Removed
+          // ), // Removed
+          Marker(
+            markerId: MarkerId("_sourceLocation"),
+            icon: BitmapDescriptor.defaultMarker,
+            position: _pGeoLocation,
+          ),
+          Marker(
+            markerId: MarkerId("_destinationLocation"),
+            icon: BitmapDescriptor.defaultMarker,
+            position: _markerGeoLocation,
+          ),
+        },
+        polylines: Set<Polyline>.of(_polylines.values),
+      ),
     );
   }
 
@@ -90,71 +90,71 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
-  Future<void> getLocation() async {
-    // Check if running on web platform
-    if (kIsWeb) {
-      // For web, skip the permission checks that are causing errors
-      try {
-        // Try to get location updates directly
-        _locationController.onLocationChanged.listen((
-          LocationData currentLocation,
-        ) {
-          if (currentLocation.latitude != null &&
-              currentLocation.longitude != null) {
-            setState(() {
-              _currentPos = LatLng(
-                currentLocation.latitude!,
-                currentLocation.longitude!,
-              );
-            });
-            // print(_currentPos);
-            _cameraToPosition(_currentPos!);
-          }
-        });
-      } catch (e) {
-        print("Error getting location on web: $e");
-        // Set a default position so the map still shows something
-        setState(() {
-          _currentPos = _pGeoLocation; // Use your predefined position
-        });
-      }
-      return;
-    }
+  // Future<void> getLocation() async { // Removed
+  //   // Check if running on web platform // Removed
+  //   if (kIsWeb) { // Removed
+  //     // For web, skip the permission checks that are causing errors // Removed
+  //     try { // Removed
+  //       // Try to get location updates directly // Removed
+  //       _locationController.onLocationChanged.listen(( // Removed
+  //         LocationData currentLocation, // Removed
+  //       ) { // Removed
+  //         if (currentLocation.latitude != null && // Removed
+  //             currentLocation.longitude != null) { // Removed
+  //           setState(() { // Removed
+  //             _currentPos = LatLng( // Removed
+  //               currentLocation.latitude!, // Removed
+  //               currentLocation.longitude!, // Removed
+  //             ); // Removed
+  //           }); // Removed
+  //           // print(_currentPos); // Removed
+  //           _cameraToPosition(_currentPos!); // Removed
+  //         } // Removed
+  //       }); // Removed
+  //     } catch (e) { // Removed
+  //       print("Error getting location on web: $e"); // Removed
+  //       // Set a default position so the map still shows something // Removed
+  //       setState(() { // Removed
+  //         _currentPos = _pGeoLocation; // Use your predefined position // Removed
+  //       }); // Removed
+  //     } // Removed
+  //     return; // Removed
+  //   } // Removed
 
-    // Original code for mobile platforms
-    bool _isLocationEnabled;
-    PermissionStatus _permissionGranted;
+  //   // Original code for mobile platforms // Removed
+  //   bool _isLocationEnabled; // Removed
+  //   PermissionStatus _permissionGranted; // Removed
 
-    _isLocationEnabled = await _locationController.serviceEnabled();
-    if (!_isLocationEnabled) {
-      _isLocationEnabled = await _locationController.requestService();
-    } else {
-      return;
-    }
+  //   _isLocationEnabled = await _locationController.serviceEnabled(); // Removed
+  //   if (!_isLocationEnabled) { // Removed
+  //     _isLocationEnabled = await _locationController.requestService(); // Removed
+  //   } else { // Removed
+  //     return; // Removed
+  //   } // Removed
 
-    _permissionGranted = await _locationController.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await _locationController.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
-        return;
-      }
-    }
+  //   _permissionGranted = await _locationController.hasPermission(); // Removed
+  //   if (_permissionGranted == PermissionStatus.denied) { // Removed
+  //     _permissionGranted = await _locationController.requestPermission(); // Removed
+  //     if (_permissionGranted != PermissionStatus.granted) { // Removed
+  //       return; // Removed
+  //     } // Removed
+  //   } // Removed
 
-    _locationController.onLocationChanged.listen((
-      LocationData currentLocation,
-    ) {
-      if (currentLocation.latitude != null &&
-          currentLocation.longitude != null) {
-        setState(() {
-          _currentPos = LatLng(
-            currentLocation.latitude!,
-            currentLocation.longitude!,
-          );
-        });
-        _cameraToPosition(_currentPos!);
-      }
-    });
-  }
+  //   _locationController.onLocationChanged.listen(( // Removed
+  //     LocationData currentLocation, // Removed
+  //   ) { // Removed
+  //     if (currentLocation.latitude != null && // Removed
+  //         currentLocation.longitude != null) { // Removed
+  //       setState(() { // Removed
+  //         _currentPos = LatLng( // Removed
+  //           currentLocation.latitude!, // Removed
+  //           currentLocation.longitude!, // Removed
+  //         ); // Removed
+  //       }); // Removed
+  //       _cameraToPosition(_currentPos!); // Removed
+  //     } // Removed
+  //   }); // Removed
+  // } // Removed
 
   Future<List<LatLng>> getPolyLinePoints() async {
     List<LatLng> polyLine = [];

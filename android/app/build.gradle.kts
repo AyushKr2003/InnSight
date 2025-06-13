@@ -28,6 +28,11 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // Load API key from local.properties
+        val properties = Properties()
+        properties.load(project.rootProject.file("local.properties").inputStream())
+        buildConfigField("String", "MAPS_API_KEY", "\"" + properties.getProperty("MAPS_API_KEY") + "\"")
     }
 
     buildTypes {

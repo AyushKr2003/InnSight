@@ -46,3 +46,4 @@ app.*.map.json
 
 
 /lib/api_key.dart
+/web/config.html
